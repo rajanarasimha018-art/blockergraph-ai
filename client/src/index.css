@@ -1,0 +1,133 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-base: #080B12;
+    --bg-sidebar: #0D111B;
+    --bg-card: #111827;
+    --bg-card-hover: #162033;
+    --border-subtle: #263044;
+    --accent-primary: #6366F1;
+    --accent-cyan: #22D3EE;
+    --status-emerald: #10B981;
+    --status-amber: #F59E0B;
+    --status-rose: #EF4444;
+  }
+
+  body {
+    background-color: var(--bg-base);
+    color: #F1F5F9;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: #080B12;
+}
+::-webkit-scrollbar-thumb {
+  background: #263044;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #374151;
+}
+
+/* Linear & Vercel Design System Card and Panel Utilities */
+.saas-card {
+  background-color: #111827;
+  border: 1px solid #263044;
+  border-radius: 12px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.saas-card:hover {
+  border-color: #3B4B68;
+}
+
+.saas-card-interactive {
+  background-color: #111827;
+  border: 1px solid #263044;
+  border-radius: 12px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.saas-card-interactive:hover {
+  background-color: #141D30;
+  border-color: #6366F1;
+  box-shadow: 0 4px 20px -2px rgba(99, 102, 241, 0.15);
+}
+
+/* Custom React Flow styling for dark SaaS theme */
+.react-flow__background {
+  background-color: #080B12 !important;
+}
+
+.react-flow__edge-path {
+  stroke: #334155 !important;
+  stroke-width: 2 !important;
+  transition: stroke 0.2s, stroke-width 0.2s;
+}
+
+.react-flow__edge.selected .react-flow__edge-path,
+.react-flow__edge:hover .react-flow__edge-path {
+  stroke: #6366F1 !important;
+  stroke-width: 2.5 !important;
+}
+
+.react-flow__edge.critical-edge .react-flow__edge-path {
+  stroke: #F59E0B !important;
+  stroke-width: 3 !important;
+  filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.5));
+}
+
+.react-flow__edge.blocked-edge .react-flow__edge-path {
+  stroke: #EF4444 !important;
+  stroke-dasharray: 4 4;
+  animation: flowDash 1s linear infinite;
+}
+
+.react-flow__handle {
+  width: 8px !important;
+  height: 8px !important;
+  background-color: #6366F1 !important;
+  border: 2px solid #080B12 !important;
+}
+
+.react-flow__controls {
+  background: #0D111B !important;
+  border: 1px solid #263044 !important;
+  border-radius: 8px !important;
+  overflow: hidden;
+}
+
+.react-flow__controls-button {
+  background: #0D111B !important;
+  border-bottom: 1px solid #263044 !important;
+  fill: #94A3B8 !important;
+}
+
+.react-flow__controls-button:hover {
+  background: #1A2333 !important;
+  fill: #6366F1 !important;
+}
+
+.react-flow__minimap {
+  background-color: #0D111B !important;
+  border: 1px solid #263044 !important;
+  border-radius: 8px !important;
+}
+
+@keyframes flowDash {
+  to {
+    stroke-dashoffset: -8;
+  }
+}
