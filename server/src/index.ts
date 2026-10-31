@@ -12,7 +12,7 @@ import demoRouter from './routes/demo.js';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 5000;
 
 // CORS configuration supporting local Vite, production Vercel domains, and credentials
 const corsOriginEnv = process.env.CORS_ORIGIN || process.env.FRONTEND_URL;
@@ -93,10 +93,12 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
   });
 });
 
+const HOST = '0.0.0.0';
+
 if (process.env.NODE_ENV !== 'test') {
-  app.listen(PORT, () => {
+  app.listen(PORT, HOST, () => {
     console.log(`=======================================================`);
-    console.log(`🚀 BlockerGraph AI Server running on http://localhost:${PORT}`);
+    console.log(`🚀 BlockerGraph AI Server running on http://${HOST}:${PORT}`);
     console.log(`📊 Graph Engine & CPM Simulator initialized.`);
     console.log(`=======================================================`);
   });
