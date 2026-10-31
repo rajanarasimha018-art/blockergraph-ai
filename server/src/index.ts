@@ -14,12 +14,36 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Enable CORS for client
+// CORS configuration supporting local Vite, production Vercel domains, and credentials
+const corsOriginEnv = process.env.CORS_ORIGIN || process.env.FRONTEND_URL;
+const allowedOrigins = corsOriginEnv
+  ? corsOriginEnv.split(',').map((o) => o.trim()).filter(Boolean)
+  : null;
+
 app.use(
   cors({
-    origin: '*',
+    origin: (origin, callback) => {
+      // Allow requests with no origin (e.g. curl, health checks, server-to-server)
+      if (!origin) return callback(null, true);
+
+      // If explicit origins are configured, validate against them
+      if (allowedOrigins && allowedOrigins.length > 0) {
+        if (allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
+          return callback(null, true);
+        }
+        // Allow Vercel preview deployments if main Vercel origin is allowed
+        if (origin.endsWith('.vercel.app') && allowedOrigins.some((o) => o.includes('.vercel.app'))) {
+          return callback(null, true);
+        }
+        return callback(new Error(`CORS blocked for origin: ${origin}`));
+      }
+
+      // Default: dynamically allow the requesting origin so credentials & Vercel work seamlessly
+      return callback(null, true);
+    },
+    credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
   })
 );
 
@@ -69,11 +93,13 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`=======================================================`);
-  console.log(`🚀 BlockerGraph AI Server running on http://localhost:${PORT}`);
-  console.log(`📊 Graph Engine & CPM Simulator initialized.`);
-  console.log(`=======================================================`);
-});
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(PORT, () => {
+    console.log(`=======================================================`);
+    console.log(`🚀 BlockerGraph AI Server running on http://localhost:${PORT}`);
+    console.log(`📊 Graph Engine & CPM Simulator initialized.`);
+    console.log(`=======================================================`);
+  });
+}
 
 export default app;
