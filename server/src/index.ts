@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import authRouter from './routes/auth.js';
@@ -80,12 +80,12 @@ app.use('/api/projects/:projectId/analytics', analyticsRouter);
 app.use('/api/demo', demoRouter);
 
 // 404 handler
-app.use((req, res) => {
+app.use((req: Request, res: Response) => {
   res.status(404).json({ success: false, error: 'Endpoint not found' });
 });
 
 // Global error handler
-app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.error('[SERVER ERROR]:', err);
   res.status(500).json({
     success: false,
