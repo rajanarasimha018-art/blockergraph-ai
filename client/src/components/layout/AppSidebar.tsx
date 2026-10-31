@@ -9,9 +9,6 @@ import {
   BarChart3,
   Settings,
   Share2,
-  ShieldCheck,
-  ChevronRight,
-  Sparkles,
   Zap
 } from 'lucide-react';
 
@@ -23,6 +20,7 @@ interface AppSidebarProps {
   project: Project;
   user: User | null;
   blockedCount: number;
+  tasksCount?: number;
 }
 
 export const AppSidebar: React.FC<AppSidebarProps> = ({
@@ -30,7 +28,8 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
   onSelectTab,
   project,
   user,
-  blockedCount
+  blockedCount,
+  tasksCount = 0
 }) => {
   const navItems: { key: TabKey; label: string; icon: React.ReactNode; badge?: React.ReactNode }[] = [
     {
@@ -113,7 +112,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
             </div>
             <div className="text-[10px] text-slate-400 mt-1 flex items-center justify-between font-mono">
               <span>Target: {project.targetDate}</span>
-              <span className="text-[#34D399]">16 Tasks</span>
+              <span className="text-[#34D399] font-medium">{tasksCount} {tasksCount === 1 ? 'Task' : 'Tasks'}</span>
             </div>
           </div>
         </div>

@@ -1,22 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Task, TaskDependency, DelaySimulationResult } from '../../types';
 import { api } from '../../api/client';
 import {
   TrendingDown,
-  Clock,
   AlertOctagon,
   Layers,
-  Sparkles,
-  ArrowRight,
   Play,
   RotateCcw
 } from 'lucide-react';
-import { StatusBadge, PriorityBadge } from '../ui/Badge';
 
 interface DelaySimulatorProps {
   projectId: string;
   tasks: Task[];
-  dependencies: TaskDependency[];
+  dependencies?: TaskDependency[];
   preselectedTask?: Task | null;
   onApplySimulationToGraph?: (result: DelaySimulationResult | null) => void;
 }
@@ -24,7 +20,7 @@ interface DelaySimulatorProps {
 export const DelaySimulator: React.FC<DelaySimulatorProps> = ({
   projectId,
   tasks,
-  dependencies,
+  dependencies: _dependencies,
   preselectedTask,
   onApplySimulationToGraph
 }) => {
@@ -42,7 +38,7 @@ export const DelaySimulator: React.FC<DelaySimulatorProps> = ({
     }
   }, [preselectedTask]);
 
-  const handleRunSimulation = async () => {
+  const handleRunSimulation = useCallback(async () => {
     if (!selectedTaskId) return;
     setLoading(true);
     setError(null);
@@ -55,13 +51,13 @@ export const DelaySimulator: React.FC<DelaySimulatorProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [projectId, selectedTaskId, delayDays, onApplySimulationToGraph]);
 
   useEffect(() => {
     if (selectedTaskId) {
       handleRunSimulation();
     }
-  }, [selectedTaskId, delayDays]);
+  }, [selectedTaskId, delayDays, handleRunSimulation]);
 
   const selectedTask = tasks.find((t) => t.id === selectedTaskId);
 
@@ -105,6 +101,12 @@ export const DelaySimulator: React.FC<DelaySimulatorProps> = ({
             </button>
           </div>
         </div>
+
+        {error && (
+          <div className="mt-4 p-3 rounded-lg bg-[#EF4444]/10 border border-[#EF4444]/30 text-[#F87171] text-xs">
+            {error}
+          </div>
+        )}
 
         {/* Form Inputs */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-5">

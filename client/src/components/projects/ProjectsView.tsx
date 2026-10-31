@@ -1,14 +1,6 @@
 import React, { useState } from 'react';
 import { Project } from '../../types';
-import {
-  FolderKanban,
-  Plus,
-  Calendar,
-  Layers,
-  CheckCircle2,
-  AlertTriangle,
-  ArrowRight
-} from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { Modal } from '../ui/Modal';
 
 interface ProjectsViewProps {

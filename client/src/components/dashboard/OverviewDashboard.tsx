@@ -12,8 +12,6 @@ import {
   TrendingDown,
   Plus,
   GitBranch,
-  ShieldAlert,
-  Sparkles,
   UserCheck
 } from 'lucide-react';
 import {
@@ -56,8 +54,8 @@ const PRIORITY_COLORS: Record<string, string> = {
 export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
   project,
   tasks,
-  dependencies,
-  activityLogs,
+  dependencies: _dependencies,
+  activityLogs: _activityLogs,
   onOpenGraph,
   onOpenSimulator,
   onOpenCreateTask,
@@ -92,6 +90,9 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
     .filter((t) => t.status !== 'Completed')
     .sort((a, b) => a.dueDate.localeCompare(b.dueDate))
     .slice(0, 5);
+
+  const uniqueDomains = new Set(tasks.flatMap((t) => t.tags || []));
+  const domainCount = uniqueDomains.size;
 
   return (
     <div className="space-y-6 pb-12">
@@ -138,7 +139,9 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
             <Layers className="w-4 h-4 text-slate-400 group-hover:text-white transition-colors" />
           </div>
           <div className="text-2xl font-bold font-mono text-white tracking-tight">{totalTasks}</div>
-          <p className="text-[11px] text-slate-400 mt-1">Across 4 engineering streams</p>
+          <p className="text-[11px] text-slate-400 mt-1">
+            {domainCount > 0 ? `Across ${domainCount} technical domains` : 'Active project deliverables'}
+          </p>
           <div className="absolute top-0 right-0 w-16 h-16 bg-[#6366F1]/5 rounded-bl-full pointer-events-none" />
         </div>
 

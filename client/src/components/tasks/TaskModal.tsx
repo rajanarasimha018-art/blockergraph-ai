@@ -17,7 +17,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({
 }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [assignedTo, setAssignedTo] = useState('Alex Chen');
+  const [assignedTo, setAssignedTo] = useState('Team Xspark');
   const [priority, setPriority] = useState<Priority>('Medium');
   const [startDate, setStartDate] = useState('2026-11-01');
   const [dueDate, setDueDate] = useState('2026-11-05');
@@ -39,7 +39,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({
     } else {
       setTitle('');
       setDescription('');
-      setAssignedTo('Alex Chen');
+      setAssignedTo('Team Xspark');
       setPriority('Medium');
       setStartDate(new Date().toISOString().split('T')[0]);
       setDueDate(new Date(Date.now() + 4 * 86400000).toISOString().split('T')[0]);

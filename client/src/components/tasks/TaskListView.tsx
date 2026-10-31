@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Task, TaskDependency, TaskStatus, Priority } from '../../types';
+import { Task, TaskDependency, TaskStatus } from '../../types';
 import { StatusBadge, PriorityBadge } from '../ui/Badge';
 import {
   Search,
@@ -23,7 +23,7 @@ interface TaskListViewProps {
 
 export const TaskListView: React.FC<TaskListViewProps> = ({
   tasks,
-  dependencies,
+  dependencies: _dependencies,
   onOpenCreateTask,
   onEditTask,
   onDeleteTask,

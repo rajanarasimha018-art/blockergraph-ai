@@ -26,8 +26,7 @@ import {
   RefreshCw,
   GitBranch,
   AlertOctagon,
-  TrendingDown,
-  Maximize2
+  TrendingDown
 } from 'lucide-react';
 
 interface DependencyGraphProps {
@@ -82,6 +81,7 @@ export const DependencyGraph: React.FC<DependencyGraphProps> = ({
       const isCritical = criticalPathIds.has(t.id);
       const isSimulatedAffected = activeSimulationResult?.downstreamAffectedTaskIds?.includes(t.id);
       const isSimulatedRisk = activeSimulationResult?.tasksAtRisk?.some((r: any) => r.taskId === t.id);
+      const isDimmed = showCriticalPathOnly && !isCritical;
 
       return {
         id: t.id,
@@ -95,11 +95,12 @@ export const DependencyGraph: React.FC<DependencyGraphProps> = ({
           isCritical,
           isSimulatedAffected,
           isSimulatedRisk,
+          isDimmed,
           onSelectTask: (task: Task) => setSelectedTask(task)
         }
       };
     });
-  }, [tasks, criticalPathIds, activeSimulationResult]);
+  }, [tasks, criticalPathIds, activeSimulationResult, showCriticalPathOnly]);
 
   const initialEdges: Edge[] = useMemo(() => {
     return dependencies.map((dep) => {
@@ -108,10 +109,12 @@ export const DependencyGraph: React.FC<DependencyGraphProps> = ({
 
       const targetTask = tasks.find((t) => t.id === dep.targetTaskId);
       const isBlockedEdge = targetTask?.status === 'Blocked';
+      const isEdgeDimmed = showCriticalPathOnly && !isCriticalEdge;
 
       let strokeColor = '#334155';
       let animated = false;
       let strokeWidth = 2;
+      let opacity = 1;
       let className = '';
 
       if (isCriticalEdge) {
@@ -124,6 +127,14 @@ export const DependencyGraph: React.FC<DependencyGraphProps> = ({
         className = 'blocked-edge';
       }
 
+      if (isEdgeDimmed) {
+        strokeColor = '#1E293B';
+        strokeWidth = 1;
+        opacity = 0.2;
+        animated = false;
+        className = '';
+      }
+
       return {
         id: dep.id,
         source: dep.sourceTaskId,
@@ -132,7 +143,8 @@ export const DependencyGraph: React.FC<DependencyGraphProps> = ({
         animated,
         style: {
           stroke: strokeColor,
-          strokeWidth
+          strokeWidth,
+          opacity
         },
         markerEnd: {
           type: MarkerType.ArrowClosed,
@@ -143,7 +155,7 @@ export const DependencyGraph: React.FC<DependencyGraphProps> = ({
         className
       };
     });
-  }, [dependencies, criticalPathIds, tasks]);
+  }, [dependencies, criticalPathIds, tasks, showCriticalPathOnly]);
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);

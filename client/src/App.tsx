@@ -1,17 +1,44 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, Suspense, lazy } from 'react';
 import { Project, Task, TaskDependency, ActivityLog, User, DelaySimulationResult } from './types';
 import { api } from './api/client';
 import { AppSidebar, TabKey } from './components/layout/AppSidebar';
 import { AppHeader } from './components/layout/AppHeader';
 import { OverviewDashboard } from './components/dashboard/OverviewDashboard';
-import { DependencyGraph } from './components/graph/DependencyGraph';
-import { DelaySimulator } from './components/simulator/DelaySimulator';
-import { AnalyticsDashboard } from './components/analytics/AnalyticsDashboard';
-import { TaskListView } from './components/tasks/TaskListView';
-import { ProjectsView } from './components/projects/ProjectsView';
-import { SettingsView } from './components/settings/SettingsView';
-import { TaskModal } from './components/tasks/TaskModal';
-import { DependencyModal } from './components/tasks/DependencyModal';
+
+// Code-split dynamic views
+const DependencyGraph = lazy(() =>
+  import('./components/graph/DependencyGraph').then((m) => ({ default: m.DependencyGraph }))
+);
+const DelaySimulator = lazy(() =>
+  import('./components/simulator/DelaySimulator').then((m) => ({ default: m.DelaySimulator }))
+);
+const AnalyticsDashboard = lazy(() =>
+  import('./components/analytics/AnalyticsDashboard').then((m) => ({ default: m.AnalyticsDashboard }))
+);
+const TaskListView = lazy(() =>
+  import('./components/tasks/TaskListView').then((m) => ({ default: m.TaskListView }))
+);
+const ProjectsView = lazy(() =>
+  import('./components/projects/ProjectsView').then((m) => ({ default: m.ProjectsView }))
+);
+const SettingsView = lazy(() =>
+  import('./components/settings/SettingsView').then((m) => ({ default: m.SettingsView }))
+);
+const TaskModal = lazy(() =>
+  import('./components/tasks/TaskModal').then((m) => ({ default: m.TaskModal }))
+);
+const DependencyModal = lazy(() =>
+  import('./components/tasks/DependencyModal').then((m) => ({ default: m.DependencyModal }))
+);
+
+function TabLoadingFallback() {
+  return (
+    <div className="p-12 flex flex-col items-center justify-center text-slate-400">
+      <div className="w-7 h-7 border-2 border-[#6366F1] border-t-transparent rounded-full animate-spin mb-3" />
+      <span className="text-xs font-mono">Loading component chunk...</span>
+    </div>
+  );
+}
 
 export function App() {
   const [currentTab, setCurrentTab] = useState<TabKey>('overview');
@@ -177,6 +204,7 @@ export function App() {
           project={project}
           user={user}
           blockedCount={blockedCount}
+          tasksCount={tasks.length}
         />
       )}
 
@@ -216,98 +244,102 @@ export function App() {
             />
           )}
 
-          {project && currentTab === 'projects' && (
-            <ProjectsView
-              projects={allProjects}
-              activeProject={project}
-              onSelectProject={handleSelectProject}
-              onCreateProject={handleCreateProject}
-            />
-          )}
+          <Suspense fallback={<TabLoadingFallback />}>
+            {project && currentTab === 'projects' && (
+              <ProjectsView
+                projects={allProjects}
+                activeProject={project}
+                onSelectProject={handleSelectProject}
+                onCreateProject={handleCreateProject}
+              />
+            )}
 
-          {project && currentTab === 'graph' && (
-            <div className="space-y-3">
-              <DependencyGraph
+            {project && currentTab === 'graph' && (
+              <div className="space-y-3">
+                <DependencyGraph
+                  projectId={project.id}
+                  tasks={tasks}
+                  dependencies={dependencies}
+                  onRefresh={() => refreshProjectData(project.id)}
+                  onSelectTaskToSimulate={handleLaunchSimulatorForTask}
+                  onOpenCreateTaskModal={() => {
+                    setEditingTask(null);
+                    setTaskModalOpen(true);
+                  }}
+                  onOpenCreateDepModal={() => setDepModalOpen(true)}
+                  onEditTask={(task) => {
+                    setEditingTask(task);
+                    setTaskModalOpen(true);
+                  }}
+                  activeSimulationResult={activeSimulationResult}
+                />
+              </div>
+            )}
+
+            {project && currentTab === 'simulator' && (
+              <DelaySimulator
                 projectId={project.id}
                 tasks={tasks}
                 dependencies={dependencies}
-                onRefresh={() => refreshProjectData(project.id)}
-                onSelectTaskToSimulate={handleLaunchSimulatorForTask}
-                onOpenCreateTaskModal={() => {
+                preselectedTask={simulatorPreselectedTask}
+                onApplySimulationToGraph={(sim) => setActiveSimulationResult(sim)}
+              />
+            )}
+
+            {project && currentTab === 'analytics' && (
+              <AnalyticsDashboard projectId={project.id} project={project} />
+            )}
+
+            {project && currentTab === 'tasks' && (
+              <TaskListView
+                tasks={tasks}
+                dependencies={dependencies}
+                onOpenCreateTask={() => {
                   setEditingTask(null);
                   setTaskModalOpen(true);
                 }}
-                onOpenCreateDepModal={() => setDepModalOpen(true)}
                 onEditTask={(task) => {
                   setEditingTask(task);
                   setTaskModalOpen(true);
                 }}
-                activeSimulationResult={activeSimulationResult}
+                onDeleteTask={handleDeleteTask}
+                onUpdateStatus={handleUpdateStatus}
+                onSimulateDelay={handleLaunchSimulatorForTask}
               />
-            </div>
-          )}
+            )}
 
-          {project && currentTab === 'simulator' && (
-            <DelaySimulator
-              projectId={project.id}
-              tasks={tasks}
-              dependencies={dependencies}
-              preselectedTask={simulatorPreselectedTask}
-              onApplySimulationToGraph={(sim) => setActiveSimulationResult(sim)}
-            />
-          )}
-
-          {project && currentTab === 'analytics' && (
-            <AnalyticsDashboard projectId={project.id} project={project} />
-          )}
-
-          {project && currentTab === 'tasks' && (
-            <TaskListView
-              tasks={tasks}
-              dependencies={dependencies}
-              onOpenCreateTask={() => {
-                setEditingTask(null);
-                setTaskModalOpen(true);
-              }}
-              onEditTask={(task) => {
-                setEditingTask(task);
-                setTaskModalOpen(true);
-              }}
-              onDeleteTask={handleDeleteTask}
-              onUpdateStatus={handleUpdateStatus}
-              onSimulateDelay={handleLaunchSimulatorForTask}
-            />
-          )}
-
-          {project && currentTab === 'settings' && (
-            <SettingsView
-              project={project}
-              user={user}
-              onResetDemo={handleResetDemo}
-              resetLoading={resetLoading}
-            />
-          )}
+            {project && currentTab === 'settings' && (
+              <SettingsView
+                project={project}
+                user={user}
+                onResetDemo={handleResetDemo}
+                resetLoading={resetLoading}
+              />
+            )}
+          </Suspense>
         </main>
       </div>
 
       {/* Task Create/Edit Modal */}
-      <TaskModal
-        isOpen={taskModalOpen}
-        onClose={() => {
-          setTaskModalOpen(false);
-          setEditingTask(null);
-        }}
-        onSubmit={handleTaskSubmit}
-        initialTask={editingTask}
-      />
+      <Suspense fallback={null}>
+        <TaskModal
+          isOpen={taskModalOpen}
+          onClose={() => {
+            setTaskModalOpen(false);
+            setEditingTask(null);
+          }}
+          onSubmit={handleTaskSubmit}
+          initialTask={editingTask}
+        />
 
-      {/* Dependency Link Modal */}
-      <DependencyModal
-        isOpen={depModalOpen}
-        onClose={() => setDepModalOpen(false)}
-        tasks={tasks}
-        onSubmit={handleDependencySubmit}
-      />
+        {/* Dependency Link Modal */}
+        <DependencyModal
+          isOpen={depModalOpen}
+          onClose={() => setDepModalOpen(false)}
+          tasks={tasks}
+          onSubmit={handleDependencySubmit}
+        />
+      </Suspense>
     </div>
   );
 }

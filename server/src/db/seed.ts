@@ -3,11 +3,11 @@ import { DatabaseState } from './db.js';
 
 export function getSampleSeedData(): DatabaseState {
   const demoUser: User = {
-    id: 'user-alex-chen',
-    email: 'alex.chen@blockergraph.ai',
-    name: 'Alex Chen',
+    id: 'user-team-xspark',
+    email: 'team@xspark.dev',
+    name: 'Team Xspark',
     avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-    role: 'Lead System Architect'
+    role: 'Lead System Architecture'
   };
 
   const project: Project = {
@@ -29,7 +29,7 @@ export function getSampleSeedData(): DatabaseState {
       projectId: project.id,
       title: 'System Architecture & API Specs',
       description: 'Define microservice interface boundaries, OpenAPI schemas, and RPC protocols.',
-      assignedTo: 'Alex Chen',
+      assignedTo: 'Team Xspark',
       priority: 'Critical',
       startDate: '2026-11-01',
       dueDate: '2026-11-04',
@@ -281,7 +281,7 @@ export function getSampleSeedData(): DatabaseState {
       projectId: project.id,
       title: 'Global DNS Failover & Production Cutover',
       description: 'Gradual Cloudflare DNS shift from v1.9 to v2.0 with automated rollback triggers.',
-      assignedTo: 'Alex Chen',
+      assignedTo: 'Team Xspark',
       priority: 'Critical',
       startDate: '2026-11-26',
       dueDate: '2026-11-28',
@@ -371,7 +371,7 @@ export function getSampleSeedData(): DatabaseState {
       id: 'act-02',
       projectId: project.id,
       action: 'TASK_COMPLETED',
-      description: 'Alex Chen completed "System Architecture & API Specs".',
+      description: 'Team Xspark completed "System Architecture & API Specs".',
       userId: demoUser.id,
       timestamp: '2026-11-04T17:00:00.000Z'
     },

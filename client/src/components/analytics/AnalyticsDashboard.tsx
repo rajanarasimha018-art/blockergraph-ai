@@ -11,27 +11,21 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  Legend,
-  LineChart,
-  Line
+  Legend
 } from 'recharts';
 import {
   Sparkles,
   AlertTriangle,
   CheckCircle2,
-  Clock,
-  TrendingUp,
-  Layers,
   ShieldAlert,
   Zap,
-  Activity,
   HeartPulse
 } from 'lucide-react';
 import { StatusBadge, PriorityBadge } from '../ui/Badge';
 
 interface AnalyticsDashboardProps {
   projectId: string;
-  project: Project;
+  project?: Project;
 }
 
 const STATUS_COLORS: Record<string, string> = {
@@ -48,7 +42,7 @@ const PRIORITY_COLORS: Record<string, string> = {
   Critical: '#EF4444'
 };
 
-export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ projectId, project }) => {
+export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ projectId, project: _project }) => {
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -89,7 +83,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ projectI
     );
   }
 
-  const { summary, charts, criticalPathTasks, blockedTasksList, insights } = data;
+  const { summary, charts, criticalPathTasks, blockedTasksList: _blockedTasksList, insights } = data;
 
   // Project Health Score (0-100) based on blockers and completion
   const healthScore = Math.max(

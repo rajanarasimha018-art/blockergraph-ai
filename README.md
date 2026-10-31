@@ -3,7 +3,7 @@
 
 [![Build & Tests](https://img.shields.io/badge/tests-10%20passed-emerald)](file:///tests/engine.test.ts)
 [![Graph Engine](https://img.shields.io/badge/engine-CPM%20%2B%20DFS%20Cycles-blue)]()
-[![Stack](https://img.shields.io/badge/stack-React%20%7C%20Node%20%7C%20Supabase-violet)]()
+[![Stack](https://img.shields.io/badge/stack-React%20%7C%20Node%20%7C%20TypeScript-violet)]()
 
 > **BlockerGraph AI** is an intelligent project dependency and blocker management platform. It combines **Directed Acyclic Graph (DAG) cycle detection**, **Critical Path Method (CPM) forward/backward pass algorithms**, and a **predictive Delay Impact Simulator** to give engineering teams mathematical foresight into complex delivery schedules.
 
@@ -46,8 +46,8 @@ Traditional task boards (Kanban, Scrum, Trello) treat tasks as independent cards
    └── src/engine/intelligence.ts  -> Explainable Insights & Bottleneck Generator
              │
              ▼
- [ Storage Layer (Hybrid Supabase PostgreSQL / Local Persistence) ]
-   ├── src/db/schema.sql           -> Production Supabase Tables, RLS & Foreign Keys
+ [ Storage Layer (Persistent Relational Store & Schema Export) ]
+   ├── src/db/schema.sql           -> Production PostgreSQL / Supabase Schema & Constraints
    ├── src/db/seed.ts              -> 16 Realistic Cloud SaaS Engineering Tasks
    └── data/db.json                -> Zero-friction standalone local persistence
 ```
@@ -187,4 +187,4 @@ To deploy directly to a remote Supabase project:
 - **Frontend:** React 19, TypeScript, Vite, Tailwind CSS v4, `@xyflow/react` (React Flow), Recharts, Lucide Icons
 - **Backend:** Node.js, Express 4, TypeScript, tsx, Zod
 - **Testing:** Vitest
-- **Database:** Supabase PostgreSQL Schema + Local relational engine
+- **Database:** Persistent Relational Store + Production PostgreSQL / Supabase Schema (`server/src/db/schema.sql`)

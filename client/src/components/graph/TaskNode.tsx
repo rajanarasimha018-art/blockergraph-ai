@@ -9,6 +9,7 @@ interface TaskNodeData {
   isCritical?: boolean;
   isSimulatedAffected?: boolean;
   isSimulatedRisk?: boolean;
+  isDimmed?: boolean;
   onSelectTask?: (task: Task) => void;
 }
 
@@ -18,6 +19,7 @@ export const TaskNode: React.FC<NodeProps> = memo(({ data, selected }) => {
   const isCritical = nodeData.isCritical || task.cpmMetrics?.isCritical;
   const isBlocked = task.status === 'Blocked' || task.blockerInfo?.isBlocked;
   const isCompleted = task.status === 'Completed';
+  const isDimmed = nodeData.isDimmed;
 
   // Linear / Vercel Card state styling
   let containerBorder = 'border-[#263044] hover:border-[#3B4B68]';
@@ -46,7 +48,9 @@ export const TaskNode: React.FC<NodeProps> = memo(({ data, selected }) => {
   return (
     <div
       onClick={() => nodeData.onSelectTask?.(task)}
-      className={`relative w-[270px] rounded-xl bg-[#111827] text-left border shadow-lg transition-all duration-150 cursor-pointer ${containerBorder} hover:translate-y-[-1px] overflow-hidden`}
+      className={`relative w-[270px] rounded-xl bg-[#111827] text-left border shadow-lg transition-all duration-200 cursor-pointer ${containerBorder} hover:translate-y-[-1px] overflow-hidden ${
+        isDimmed ? 'opacity-25 hover:opacity-80 scale-95' : 'opacity-100'
+      }`}
     >
       {/* Target handle (Prerequisites enter Left) */}
       <Handle

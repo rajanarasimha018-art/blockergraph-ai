@@ -7,8 +7,6 @@ import {
   BookOpen,
   Bell,
   ChevronDown,
-  Layers,
-  Sparkles,
   Command
 } from 'lucide-react';
 import { Modal } from '../ui/Modal';

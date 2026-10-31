@@ -1,27 +1,17 @@
 import React, { useState } from 'react';
 import { Project, User } from '../../types';
-import {
-  Settings,
-  Database,
-  Shield,
-  Key,
-  Cpu,
-  CheckCircle2,
-  RefreshCw,
-  Terminal,
-  Zap
-} from 'lucide-react';
+import { Database, RefreshCw, Zap } from 'lucide-react';
 
 interface SettingsViewProps {
-  project: Project;
-  user: User | null;
+  project?: Project;
+  user?: User | null;
   onResetDemo: () => void;
   resetLoading?: boolean;
 }
 
 export const SettingsView: React.FC<SettingsViewProps> = ({
-  project,
-  user,
+  project: _project,
+  user: _user,
   onResetDemo,
   resetLoading
 }) => {
@@ -39,7 +29,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       <div className="pb-3 border-b border-[#263044]">
         <h1 className="text-xl font-bold text-white tracking-tight">System & Workspace Settings</h1>
         <p className="text-xs text-slate-400 mt-0.5">
-          Configure Supabase PostgreSQL database integration, CPM graph engine rules, and team metadata.
+          Configure persistent relational store, CPM graph engine parameters, and team metadata.
         </p>
       </div>
 
@@ -78,7 +68,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           <div className="flex items-center gap-2">
             <Database className="w-4 h-4 text-[#22D3EE]" />
             <h2 className="text-xs font-bold text-white uppercase tracking-wider">
-              Supabase PostgreSQL Database
+              Relational Storage & SQL Schema
             </h2>
           </div>
           <span className="px-2 py-0.5 rounded bg-[#10B981]/15 text-[#34D399] border border-[#10B981]/30 text-[10px] font-bold">
@@ -87,7 +77,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
         </div>
 
         <p className="text-xs text-slate-400 leading-relaxed">
-          BlockerGraph AI connects directly to Supabase PostgreSQL with full row-level security (RLS) policies and foreign key constraints on tasks, dependencies, and audit logs.
+          BlockerGraph AI operates on a persistent relational JSON datastore with ACID transactional file updates, and provides a production-ready PostgreSQL / Supabase schema (with foreign keys and check constraints) for cloud migration.
         </p>
 
         <div className="p-3.5 rounded-lg bg-[#0D111B] border border-[#263044] space-y-2 text-xs font-mono">
@@ -101,11 +91,11 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
             </button>
           </div>
           <div className="text-[11px] text-slate-300">
-            ✓ Tables: public.projects, public.tasks, public.task_dependencies, public.activity_logs
+            ✓ Active Storage: Zero-latency persistent transactional JSON database (Server Local)
             <br />
-            ✓ Constraints: CHECK (source_task_id != target_task_id), UNIQUE (source_task_id, target_task_id)
+            ✓ Relational Schema Export: public.projects, public.tasks, public.task_dependencies, public.activity_logs
             <br />
-            ✓ Engine: Hybrid Supabase client + Zero-latency persistent local fallback
+            ✓ Integrity Constraints: CHECK (source_task_id != target_task_id), UNIQUE (source_task_id, target_task_id)
           </div>
         </div>
       </div>
